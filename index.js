@@ -71,26 +71,26 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   const count = await Exercise.findOne({}).count();
 
 
-  // if (from && to && limit) {
-  //   exercises = await Exercise.find({
-  //     date: {
-  //       $gte: new Date(from).toDateString(),
-  //       $lte: new Date(to).toDateString(),
-  //     },
-  //   }).limit(parseInt(limit));
-  // }
+  if (from && to && limit) {
+    exercises = await Exercise.find({
+      date: {
+        $gte: new Date(from).toDateString(),
+        $lte: new Date(to).toDateString(),
+      },
+    }).limit(parseInt(limit));
+  }
 
-  // let data = exercises.map((exe) => ({
-  //   description: exe.description,
-  //   duration: exe.duration,
-  //   date: exe.date,
-  // }));
+  const data = exercises.map((exe) => ({
+    description: exe.description,
+    duration: exe.duration,
+    date: exe.date,
+  }));
 
   res.json({
     _id: user.id,
     username: user.username,
     count: count,
-    log: exercises,
+    log: data,
   });
 });
 
