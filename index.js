@@ -24,8 +24,9 @@ app.post('/api/users', async (req, res) => {
 
 app.get('/api/users', async (req, res) => {
   const users = await User.find({});
+  const data = users.map((user) => ({ username: user.username, _id: user.id }));
 
-  res.json({ users });
+  res.json(data);
 });
 
 app.post('/api/users/:_id/exercises', async (req, res) => {
@@ -44,11 +45,11 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   await exercise.save();
 
   res.json({
+    _id: user.id,
     username: user.username,
     description: exercise.description,
     duration: exercise.duration,
     date: exercise.date,
-    _id: user.id,
   });
 });
 
@@ -56,10 +57,19 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   const { from, to, limit } = req.query;
 
   const user = await User.findById(req.params._id);
-
-  const exercises = await Exercise.find({}).limit(parseInt(limit));
-
+  
   const len = await Exercise.findOne({ user: req.params._id }).count();
+
+  let exercises = await Exercise.find({});
+
+  if (from && to && limit) {
+    exercises = await Exercise.find({
+      date: {
+        $gte: new Date(from).toDateString(),
+        $lte: new Date(to).toDateString(),
+      },
+    }).limit(parseInt(limit));
+  }
 
   let data = exercises.map((exe) => ({
     description: exe.description,
@@ -67,22 +77,10 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     date: exe.date,
   }));
 
-  if (from && to) {
-    data = data.filter(
-      (d) =>
-        Date.parse(d.date) >= Date.parse(from) &&
-        Date.parse(d.date) <= Date.parse(to)
-    );
-  }
-
-  if (limit) {
-    data = data.filter((d, i) => i < limit);
-  }
-
   res.json({
+    _id: user.id,
     username: user.username,
     count: len,
-    _id: user.id,
     log: data,
   });
 });
