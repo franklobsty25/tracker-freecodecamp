@@ -70,14 +70,21 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
   const count = await Exercise.findOne({}).count();
 
-
   if (from && to && limit) {
-    exercises = await Exercise.find({
-      date: {
-        $gte: new Date(from).toDateString(),
-        $lte: new Date(to).toDateString(),
-      },
-    }).limit(parseInt(limit));
+    // exercises = await Exercise.find({
+    //   date: {
+    //     $gte: new Date(from).toDateString(),
+    //     $lte: new Date(to).toDateString(),
+    //   },
+    // }).limit(parseInt(limit));
+
+    exercises = exercises.filter(
+      (d) =>
+        Date.parse(d.date) >= Date.parse(from) &&
+        Date.parse(d.date) <= Date.parse(to)
+    );
+
+    exercises = exercises.filter((d, i) => i <= limit);
   }
 
   const data = exercises.map((exe) => ({
