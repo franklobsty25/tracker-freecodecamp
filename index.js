@@ -66,30 +66,31 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
   const user = await User.findById(req.params._id);
 
-  const len = await Exercise.findOne({ user: req.params._id }).count();
-
   let exercises = await Exercise.find({});
 
-  if (from && to && limit) {
-    exercises = await Exercise.find({
-      date: {
-        $gte: new Date(from).toDateString(),
-        $lte: new Date(to).toDateString(),
-      },
-    }).limit(parseInt(limit));
-  }
+  const count = await Exercise.findOne({}).count();
 
-  let data = exercises.map((exe) => ({
-    description: exe.description,
-    duration: exe.duration,
-    date: exe.date,
-  }));
+
+  // if (from && to && limit) {
+  //   exercises = await Exercise.find({
+  //     date: {
+  //       $gte: new Date(from).toDateString(),
+  //       $lte: new Date(to).toDateString(),
+  //     },
+  //   }).limit(parseInt(limit));
+  // }
+
+  // let data = exercises.map((exe) => ({
+  //   description: exe.description,
+  //   duration: exe.duration,
+  //   date: exe.date,
+  // }));
 
   res.json({
     _id: user.id,
     username: user.username,
-    count: len,
-    log: data,
+    count: count,
+    log: exercises,
   });
 });
 

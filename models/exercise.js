@@ -12,13 +12,7 @@ const exerciseSchema = new mongoose.Schema({
   date: {
     type: String,
     required: false,
-    default: new Date().toDateString(),
   },
-
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }
 });
 
 module.exports = mongoose.model('Exercise', exerciseSchema);
