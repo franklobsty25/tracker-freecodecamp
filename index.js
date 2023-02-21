@@ -32,15 +32,23 @@ app.get('/api/users', async (req, res) => {
 app.post('/api/users/:_id/exercises', async (req, res) => {
   const user = await User.findById(req.params._id);
 
-  const exercise = new Exercise({
-    description: req.body.description,
-    duration: req.body.duration,
-    date:
-      req.body.date !== undefined
-        ? new Date(req.body.date).toDateString()
-        : new Date().toDateString(),
-    user: user.id,
-  });
+  let exercise;
+
+  if (req.body.date) {
+    exercise = new Exercise({
+      description: req.body.description,
+      duration: req.body.duration,
+      date: new Date(req.body.date).toDateString(),
+      user: user.id,
+    });
+  } else {
+    exercise = new Exercise({
+      description: req.body.description,
+      duration: req.body.duration,
+      date: new Date().toDateString(),
+      user: user.id,
+    });
+  }
 
   await exercise.save();
 
@@ -57,7 +65,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   const { from, to, limit } = req.query;
 
   const user = await User.findById(req.params._id);
-  
+
   const len = await Exercise.findOne({ user: req.params._id }).count();
 
   let exercises = await Exercise.find({});
