@@ -79,15 +79,16 @@ app.get('/api/users/:_id/logs', async (req, res) => {
       date: exe.date,
     }));
 
-    res.json({
+    return res.json({
       _id: user.id,
       username: user.username,
       ...(from && { from: new Date(from).toDateString() }),
       count: exercises.length,
       log: data,
     });
+  }
 
-  } else if (to) {
+  if (to) {
     const exercises = await Exercise.find({
       date: {
         $eq: new Date(to).toDateString(),
@@ -100,7 +101,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
       date: exe.date,
     }));
 
-    res.json({
+    return res.json({
       _id: user.id,
       username: user.username,
       ...(to && { to: new Date(to).toDateString() }),
@@ -108,6 +109,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
       log: data,
     });
   }
+
   if (limit) {
     const exercises = await Exercise.find({}).limit(parseInt(limit));
 
@@ -117,28 +119,28 @@ app.get('/api/users/:_id/logs', async (req, res) => {
       date: exe.date,
     }));
 
-    res.json({
-      _id: user.id,
-      username: user.username,
-      count: exercises.length,
-      log: data,
-    });
-  } else {
-    const exercises = await Exercise.find({});
-
-    const data = exercises.map((exe) => ({
-      description: exe.description,
-      duration: exe.duration,
-      date: exe.date,
-    }));
-
-    res.json({
+    return res.json({
       _id: user.id,
       username: user.username,
       count: exercises.length,
       log: data,
     });
   }
+
+  const exercises = await Exercise.find({});
+
+  const data = exercises.map((exe) => ({
+    description: exe.description,
+    duration: exe.duration,
+    date: exe.date,
+  }));
+
+  res.json({
+    _id: user.id,
+    username: user.username,
+    count: exercises.length,
+    log: data,
+  });
 });
 
 mongoose
