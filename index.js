@@ -55,9 +55,9 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   res.json({
     _id: user.id,
     username: user.username,
-    description: exercise.description,
-    duration: exercise.duration,
     date: exercise.date,
+    duration: exercise.duration,
+    description: exercise.description,
   });
 });
 
@@ -88,17 +88,19 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   }
 
   const data = exercises.map((exe) => ({
-    date: exe.date,
-    duration: exe.duration,
     description: exe.description,
+    duration: exe.duration,
+    date: exe.date,
   }));
 
-  res.json({
+  const userObj = {
     _id: user.id,
     username: user.username,
     count: count,
     log: data,
-  });
+  };
+
+  res.json(userObj);
 });
 
 mongoose
