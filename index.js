@@ -66,11 +66,10 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
   const user = await User.findById(req.params._id);
 
-  if (from || to) {
+  if (from) {
     const exercises = await Exercise.find({
       date: {
-        $gte: new Date(from).toDateString(),
-        $lte: new Date(to).toDateString(),
+        $eq: new Date(from).toDateString(),
       },
     });
 
@@ -84,11 +83,32 @@ app.get('/api/users/:_id/logs', async (req, res) => {
       _id: user.id,
       username: user.username,
       ...(from && { from: new Date(from).toDateString() }),
+      count: exercises.length,
+      log: data,
+    });
+
+  } else if (to) {
+    const exercises = await Exercise.find({
+      date: {
+        $eq: new Date(to).toDateString(),
+      },
+    });
+
+    const data = exercises.map((exe) => ({
+      description: exe.description,
+      duration: exe.duration,
+      date: exe.date,
+    }));
+
+    res.json({
+      _id: user.id,
+      username: user.username,
       ...(to && { to: new Date(to).toDateString() }),
       count: exercises.length,
       log: data,
     });
-  } else if (limit) {
+  }
+  if (limit) {
     const exercises = await Exercise.find({}).limit(parseInt(limit));
 
     const data = exercises.map((exe) => ({
