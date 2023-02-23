@@ -62,29 +62,25 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
+  let exercises;
+
   const { from, to, limit } = req.query;
 
   const user = await User.findById(req.params._id);
 
-  let exercises = await Exercise.find({});
-
   const count = await Exercise.findOne({}).count();
 
-  if (from && to && limit) {
-    // exercises = await Exercise.find({
-    //   date: {
-    //     $gte: new Date(from).toDateString(),
-    //     $lte: new Date(to).toDateString(),
-    //   },
-    // }).limit(parseInt(limit));
-
-    exercises = exercises.filter(
-      (d) =>
-        Date.parse(d.date) >= Date.parse(from) &&
-        Date.parse(d.date) <= Date.parse(to)
-    );
-
-    exercises = exercises.filter((d, i) => i <= limit);
+  if (from && to) {
+    exercises = await Exercise.find({
+      date: {
+        $gte: new Date(from).toDateString(),
+        $lte: new Date(to).toDateString(),
+      },
+    });
+  } else if (limit) {
+    exercises = await Exercise.find({}).limit(parseInt(limit));
+  } else {
+    exercises = await Exercise.find({});
   }
 
   const data = exercises.map((exe) => ({
@@ -93,14 +89,12 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     date: exe.date,
   }));
 
-  const userObj = {
+  res.json({
     _id: user.id,
     username: user.username,
     count: count,
     log: data,
-  };
-
-  res.json(userObj);
+  });
 });
 
 mongoose
