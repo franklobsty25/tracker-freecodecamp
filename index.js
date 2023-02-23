@@ -62,8 +62,6 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
-  let log = [];
-
   const { from, to, limit } = req.query;
 
   const user = await User.findById(req.params._id);
@@ -89,7 +87,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     exercises = exercises.filter((d, i) => i <= limit);
   }
 
-  log = exercises.map((exe) => ({
+  const data = exercises.map((exe) => ({
     description: exe.description,
     duration: exe.duration,
     date: exe.date,
@@ -99,7 +97,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     _id: user.id,
     username: user.username,
     count: count,
-    log: log,
+    log: data,
   };
 
   res.json(userObj);
