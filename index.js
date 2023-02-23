@@ -88,9 +88,9 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   }
 
   const data = exercises.map((exe) => ({
-    description: exe.description,
-    duration: exe.duration,
     date: exe.date,
+    duration: exe.duration,
+    description: exe.description,
   }));
 
   res.json({
