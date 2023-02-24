@@ -29,35 +29,31 @@ app.get('/api/users', async (req, res) => {
   res.json(data);
 });
 
-app.post('/api/users/:_id/exercises', async (req, res) => {
-  const user = await User.findById(req.params._id);
-
-  let exercise;
+app.post('/api/users/:_id/exercises', (req, res) => {
+  let exercise = {
+    userId: req.params._id,
+    description: req.body.description,
+    duration: req.body.duration,
+  };
 
   if (req.body.date) {
-    exercise = new Exercise({
-      description: req.body.description,
-      duration: req.body.duration,
-      date: new Date(req.body.date).toDateString(),
-      user: user.id,
-    });
-  } else {
-    exercise = new Exercise({
-      description: req.body.description,
-      duration: req.body.duration,
-      date: new Date().toDateString(),
-      user: user.id,
-    });
+    exercise.date = req.body.date;
   }
 
-  await exercise.save();
+  new Exercise(exercise).save((err, exercise) => {
+    if (err) {
+      return console.error(err);
+    }
 
-  res.json({
-    _id: user.id,
-    username: user.username,
-    date: exercise.date,
-    duration: exercise.duration,
-    description: exercise.description,
+    User.findById(req.params._id, (err, user) => {
+      res.json({
+        _id: user.id,
+        username: user.username,
+        description: exercise.description,
+        duration: exercise.duration,
+        date: exercise.date,
+      });
+    });
   });
 });
 
