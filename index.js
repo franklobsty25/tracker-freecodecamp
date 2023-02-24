@@ -106,6 +106,14 @@ app.get('/api/users/:_id/logs', (req, res) => {
           return console.error(err);
         }
 
+        exercises = exercises.map((exercise) => {
+          return {
+            description: exercise.description,
+            duration: exercise.duration,
+            date: exercise.date,
+          };
+        });
+
         responseObj.count = exercises.length;
         responseObj.log = exercises;
 
