@@ -61,30 +61,26 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   });
 });
 
-app.get('/api/users/:_id/logs', async (req, res) => {
+app.get('/api/users/:_id/logs', (req, res) => {
   const responseObj = {};
 
-  const { from, to, limit } = req.query;
+  User.findById(req.params._id, (err, user) => {
+    if (err) {
+      return console.error(err);
+    }
 
-  const user = await User.findById(req.params._id);
+    responseObj = {
+      _id: user.id,
+      username: user.username,
+    };
 
-  responseObj = { _id: user.id, username: user.username };
+    Exercise.find({ userId: req.params._id }, (err, exercises) => {
+      responseObj.log = exercises;
+      responseObj.count = exercises.length;
 
-  const exercises = await Exercise.find({userId: req.params._id});
-
-  responseObj.log = exercises;
-  responseObj.count = exercises.length;
-
-  if (from) {
-  }
-
-  if (to) {
-  }
-
-  if (limit) {
-  }
-
-  res.json(responseObj);
+      res.json(responseObj);
+    });
+  });
 });
 
 mongoose
