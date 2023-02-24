@@ -87,9 +87,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
     }
   }
 
-  User.findById(userId)
-    .limit(limit)
-    .exec((err, user) => {
+  User.findById(userId, (err, user) => {
       if (err) {
         return console.error(err);
       }
@@ -99,7 +97,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
         username: user.username,
       };
 
-      Exercise.find(queryObj, (err, exercises) => {
+      Exercise.find(queryObj).limit(limit).exec((err, exercises) => {
         if (err) {
           return console.error(err);
         }
