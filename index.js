@@ -88,16 +88,18 @@ app.get('/api/users/:_id/logs', (req, res) => {
   }
 
   User.findById(userId, (err, user) => {
-      if (err) {
-        return console.error(err);
-      }
+    if (err) {
+      return console.error(err);
+    }
 
-      responseObj = {
-        _id: user.id,
-        username: user.username,
-      };
+    responseObj = {
+      _id: user.id,
+      username: user.username,
+    };
 
-      Exercise.find(queryObj).limit(limit).exec((err, exercises) => {
+    Exercise.find(queryObj)
+      .limit(limit)
+      .exec((err, exercises) => {
         if (err) {
           return console.error(err);
         }
@@ -107,7 +109,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
 
         res.json(responseObj);
       });
-    });
+  });
 });
 
 mongoose
