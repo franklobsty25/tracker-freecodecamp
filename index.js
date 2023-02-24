@@ -45,7 +45,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
   if (req.body.date) {
     exerciseObj.date = new Date(req.body.date).toDateString();
   } else {
-    exerciseObj.date = new Date().toDateString()
+    exerciseObj.date = new Date().toDateString();
   }
 
   const newExercise = new Exercise(exerciseObj);
@@ -81,6 +81,10 @@ app.get('/api/users/:_id/logs', (req, res) => {
     };
 
     Exercise.find({ userId: req.params._id }, (err, exercises) => {
+      if (err) {
+        return console.error(err);
+      }
+      
       responseObj.log = exercises;
       responseObj.count = exercises.length;
 
