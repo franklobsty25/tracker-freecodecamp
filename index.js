@@ -15,40 +15,46 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-app.post('/api/users', async (req, res) => {
+app.post('/api/users', (req, res) => {
   const user = new User({ username: req.body.username });
-  await user.save();
+  user.save((err, user) => {
+    if (err) {
+      return console.error(err);
+    }
 
-  res.json({ username: req.body.username, _id: user.id });
+    res.json({ username: req.body.username, _id: user.id });
+  });
 });
 
 app.get('/api/users', async (req, res) => {
-  const users = await User.find({});
-  const data = users.map((user) => ({ username: user.username, _id: user.id }));
-
-  res.json(data);
+  User.find({}, (err, user) => {
+    if (err) {
+      return console.error(err);
+    }
+    res.json(user);
+  });
 });
 
 app.post('/api/users/:_id/exercises', (req, res) => {
-  let exercise = {
-    userId: req.params._id,
+  let exerciseObj = {
+    user: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
   };
 
   if (req.body.date) {
-    exercise.date = req.body.date;
+    exerciseObj.date = new Date(req.body.date).toDateString();
   } else {
-    exercise.date = new Date().toDateString()
+    exerciseObj.date = new Date().toDateString()
   }
 
-  const newExercise = new Exercise(exercise);
+  const newExercise = new Exercise(exerciseObj);
 
   User.findById(req.params._id, (err, user) => {
     if (err) {
       return console.error(err);
     }
-    
+
     newExercise.save();
 
     res.json({
@@ -56,7 +62,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
       username: user.username,
       description: newExercise.description,
       duration: newExercise.duration,
-      date: newExercise.date.toDateString(),
+      date: newExercise.date,
     });
   });
 });
@@ -74,7 +80,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
       username: user.username,
     };
 
-    Exercise.find({ userId: req.params._id }, (err, exercises) => {
+    Exercise.find({ user: req.params._id }, (err, exercises) => {
       responseObj.log = exercises;
       responseObj.count = exercises.length;
 
