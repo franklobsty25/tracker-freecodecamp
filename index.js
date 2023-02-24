@@ -70,7 +70,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
   responseObj = { _id: user.id, username: user.username };
 
-  const exercises = await Exercise.find({});
+  const exercises = await Exercise.find({userId: req.params._id});
 
   responseObj.log = exercises;
   responseObj.count = exercises.length;
