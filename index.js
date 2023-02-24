@@ -38,6 +38,8 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 
   if (req.body.date) {
     exercise.date = req.body.date;
+  } else {
+    exercise.date = new Date().toDateString()
   }
 
   const newExercise = new Exercise(exercise);
