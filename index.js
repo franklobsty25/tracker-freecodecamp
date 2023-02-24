@@ -37,7 +37,7 @@ app.get('/api/users', async (req, res) => {
 
 app.post('/api/users/:_id/exercises', (req, res) => {
   let exerciseObj = {
-    user: req.params._id,
+    userId: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
   };
@@ -80,7 +80,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
       username: user.username,
     };
 
-    Exercise.find({ user: req.params._id }, (err, exercises) => {
+    Exercise.find({ userId: req.params._id }, (err, exercises) => {
       responseObj.log = exercises;
       responseObj.count = exercises.length;
 

@@ -13,7 +13,7 @@ const exerciseSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  user: mongoose.Schema.Types.ObjectId,
+  userId: mongoose.Schema.Types.ObjectId,
 });
 
 module.exports = mongoose.model('Exercise', exerciseSchema);
