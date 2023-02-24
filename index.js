@@ -70,28 +70,44 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 app.get('/api/users/:_id/logs', (req, res) => {
   let responseObj = {};
   let userId = req.params._id;
+  let { from, to, limit } = req.query;
+  let queryObj = { userId };
 
-  User.findById(userId, (err, user) => {
-    if (err) {
-      return console.error(err);
+  if (from || to) {
+    queryObj.date = {};
+    
+    if (from) {
+      queryObj.date['$gte'] = from;
     }
 
-    responseObj = {
-      _id: user.id,
-      username: user.username,
-    };
+    if (to) {
+      queryObj.date['$lte'] = to;
+    }
+  }
 
-    Exercise.find({ userId }, (err, exercises) => {
+  User.findById(userId)
+    .limit(parseInt(limit))
+    .exec((err, user) => {
       if (err) {
         return console.error(err);
       }
 
-      responseObj.log = exercises;
-      responseObj.count = exercises.length;
+      responseObj = {
+        _id: user.id,
+        username: user.username,
+      };
 
-      res.json(responseObj);
+      Exercise.find(queryObj, (err, exercises) => {
+        if (err) {
+          return console.error(err);
+        }
+
+        responseObj.log = exercises;
+        responseObj.count = exercises.length;
+
+        res.json(responseObj);
+      });
     });
-  });
 });
 
 mongoose
