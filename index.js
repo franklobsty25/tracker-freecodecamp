@@ -62,85 +62,29 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
+  const responseObj = {};
+
   const { from, to, limit } = req.query;
 
   const user = await User.findById(req.params._id);
 
-  if (from) {
-    const exercises = await Exercise.find({
-      date: {
-        $eq: new Date(from).toDateString(),
-      },
-    });
-
-    const data = exercises.map((exe) => ({
-      description: exe.description,
-      duration: exe.duration,
-      date: exe.date,
-    }));
-
-    return res.json({
-      _id: user.id,
-      username: user.username,
-      ...(from && { from: new Date(from).toDateString() }),
-      count: exercises.length,
-      log: data,
-    });
-  }
-
-  if (to) {
-    const exercises = await Exercise.find({
-      date: {
-        $eq: new Date(to).toDateString(),
-      },
-    });
-
-    const data = exercises.map((exe) => ({
-      description: exe.description,
-      duration: exe.duration,
-      date: exe.date,
-    }));
-
-    return res.json({
-      _id: user.id,
-      username: user.username,
-      ...(to && { to: new Date(to).toDateString() }),
-      count: exercises.length,
-      log: data,
-    });
-  }
-
-  if (limit) {
-    const exercises = await Exercise.find({}).limit(parseInt(limit));
-
-    const data = exercises.map((exe) => ({
-      description: exe.description,
-      duration: exe.duration,
-      date: exe.date,
-    }));
-
-    return res.json({
-      _id: user.id,
-      username: user.username,
-      count: exercises.length,
-      log: data,
-    });
-  }
+  responseObj = { _id: user.id, username: user.username };
 
   const exercises = await Exercise.find({});
 
-  const data = exercises.map((exe) => ({
-    description: exe.description,
-    duration: exe.duration,
-    date: exe.date,
-  }));
+  responseObj.log = exercises;
+  responseObj.count = exercises.length;
 
-  res.json({
-    _id: user.id,
-    username: user.username,
-    count: exercises.length,
-    log: data,
-  });
+  if (from) {
+  }
+
+  if (to) {
+  }
+
+  if (limit) {
+  }
+
+  res.json(responseObj);
 });
 
 mongoose
