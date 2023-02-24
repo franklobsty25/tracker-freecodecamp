@@ -110,7 +110,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
           return {
             description: exercise.description,
             duration: exercise.duration,
-            date: exercise.date,
+            date: exercise.date.toDateString(),
           };
         });
 
