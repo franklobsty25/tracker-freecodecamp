@@ -73,9 +73,11 @@ app.get('/api/users/:_id/logs', (req, res) => {
   let { from, to, limit } = req.query;
   let queryObj = { userId };
 
+  limit ? parseInt(limit) : limit;
+
   if (from || to) {
     queryObj.date = {};
-    
+
     if (from) {
       queryObj.date['$gte'] = from;
     }
@@ -86,7 +88,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
   }
 
   User.findById(userId)
-    .limit(parseInt(limit))
+    .limit(limit)
     .exec((err, user) => {
       if (err) {
         return console.error(err);
@@ -102,8 +104,8 @@ app.get('/api/users/:_id/logs', (req, res) => {
           return console.error(err);
         }
 
-        responseObj.log = exercises;
         responseObj.count = exercises.length;
+        responseObj.log = exercises;
 
         res.json(responseObj);
       });
