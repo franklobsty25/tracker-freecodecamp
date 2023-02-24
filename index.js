@@ -68,9 +68,10 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 });
 
 app.get('/api/users/:_id/logs', (req, res) => {
-  const responseObj = {};
+  let responseObj = {};
+  let userId = req.params._id;
 
-  User.findById(req.params._id, (err, user) => {
+  User.findById(userId, (err, user) => {
     if (err) {
       return console.error(err);
     }
@@ -80,11 +81,11 @@ app.get('/api/users/:_id/logs', (req, res) => {
       username: user.username,
     };
 
-    Exercise.find({ userId: req.params._id }, (err, exercises) => {
+    Exercise.find({ userId }, (err, exercises) => {
       if (err) {
         return console.error(err);
       }
-      
+
       responseObj.log = exercises;
       responseObj.count = exercises.length;
 
