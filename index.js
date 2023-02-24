@@ -70,10 +70,12 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 app.get('/api/users/:_id/logs', (req, res) => {
   let responseObj = {};
   let userId = req.params._id;
-  let { from, to, limit } = req.query;
+  let from = req.query.from;
+  let to = req.query.to;
+  let limit = req.query.limit;
   let queryObj = { userId };
 
-  limit ? parseInt(limit) : limit;
+  limit = limit ? parseInt(limit) : limit;
 
   if (from || to) {
     queryObj.date = {};
