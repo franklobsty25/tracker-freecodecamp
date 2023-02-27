@@ -147,7 +147,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
   res.json({
     ...user.toJSON(),
-    count: await Exercise.countDocuments({ userId }),
+    count: exercises.length,
     log: exercises.map((exercise) => {
       return {
         description: exercise.description,
