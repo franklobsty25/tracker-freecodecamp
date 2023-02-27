@@ -10,7 +10,7 @@ const exerciseSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: String,
+    type: Date,
     required: false,
   },
   userId: mongoose.Schema.Types.ObjectId,

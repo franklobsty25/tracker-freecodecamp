@@ -62,100 +62,98 @@ app.post('/api/users/:_id/exercises', (req, res) => {
       username: user.username,
       description: newExercise.description,
       duration: newExercise.duration,
-      date: newExercise.date,
+      date: newExercise.date.toDateString(),
     });
   });
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
-  // let responseObj = {};
-  // let userId = req.params._id;
-  // let from = req.query.from;
-  // let to = req.query.to;
-  // let limit = req.query.limit;
-  // let queryObj = { userId };
-
-  // limit = limit ? parseInt(limit) : limit;
-
-  // if (from || to) {
-  //   queryObj.date = {};
-
-  //   if (from) {
-  //     queryObj.date['$gte'] = from;
-  //   }
-
-  //   if (to) {
-  //     queryObj.date['$lte'] = to;
-  //   }
-  // }
-
-  // User.findById(userId, (err, user) => {
-  //   if (err) {
-  //     return console.error(err);
-  //   }
-
-  //   responseObj = {
-  //     _id: user.id,
-  //     username: user.username,
-  //   };
-
-  //   Exercise.find(queryObj)
-  //     .limit(limit)
-  //     .exec((err, exercises) => {
-  //       if (err) {
-  //         return console.error(err);
-  //       }
-
-  //       exercises = exercises.map((exercise) => {
-  //         return {
-  //           description: exercise.description,
-  //           duration: exercise.duration,
-  //           date: exercise.date
-  //         };
-  //       });
-
-  //       responseObj.count = exercises.length;
-  //       responseObj.log = exercises;
-
-  //       res.json(responseObj);
-  //     });
-  // });
-
-  const { from, to, limit } = req.query;
+  let responseObj = {};
   let userId = req.params._id;
-  const query = { userId };
+  let { from, to, limit } = req.query
+  let queryObj = { userId };
 
   if (from || to) {
-    query.date = {};
+    queryObj.date = {};
 
     if (from) {
-      query.date['$gte'] = from;
+      queryObj.date['$gte'] = new Date(from);
     }
 
     if (to) {
-      query.date['$lte'] = to;
+      queryObj.date['$lte'] = new Date(to);
     }
   }
 
-  const user = await User.findById(userId);
-  const exerciseQuery = Exercise.find(query);
-  if (limit) {
-    exerciseQuery.limit(parseInt(limit));
-  }
+  User.findById(userId, (err, user) => {
+    if (err) {
+      return console.error(err);
+    }
 
-  const exercises = await exerciseQuery;
+    responseObj = {
+      _id: user.id,
+      username: user.username,
+    };
 
-  res.json({
-    ...user.toJSON(),
-    count: exercises.length,
-    log: exercises.map((exercise) => {
-      return {
-        description: exercise.description,
-        duration: exercise.duration,
-        date: exercise.date,
-      };
-    }),
+    nonNullLimit = parseInt(limit) ?? 500;
+
+    Exercise.find(queryObj)
+      .limit(nonNullLimit)
+      .exec((err, exercises) => {
+        if (err) {
+          return console.error(err);
+        }
+
+        exercises = exercises.map((exercise) => {
+          return {
+            description: exercise.description,
+            duration: exercise.duration,
+            date: exercise.date.toDateString(),
+          };
+        });
+
+        responseObj.count = exercises.length;
+        responseObj.log = exercises;
+
+        res.json(responseObj);
+      });
   });
+
+  // const { from, to, limit } = req.query;
+  // let userId = req.params._id;
+  // const query = { userId };
+
+  // if (from || to) {
+  //   query.date = {};
+
+  //   if (from) {
+  //     query.date['$gte'] = from;
+  //   }
+
+  //   if (to) {
+  //     query.date['$lte'] = to;
+  //   }
+  // }
+
+  // const user = await User.findById(userId);
+  // const exerciseQuery = Exercise.find(query);
+  // if (limit) {
+  //   exerciseQuery.limit(parseInt(limit));
+  // }
+
+  // const exercises = await exerciseQuery;
+
+  // res.json({
+  //   ...user.toJSON(),
+  //   count: exercises.length,
+  //   log: exercises.map((exercise) => {
+  //     return {
+  //       description: exercise.description,
+  //       duration: exercise.duration,
+  //       date: exercise.date,
+  //     };
+  //   }),
+  // });
 });
 
 mongoose
