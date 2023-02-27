@@ -70,7 +70,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 app.get('/api/users/:_id/logs', async (req, res) => {
   let responseObj = {};
   let userId = req.params._id;
-  let { from, to, limit } = req.query
+  let { from, to, limit } = req.query;
   let queryObj = { userId };
 
   if (from || to) {
@@ -118,42 +118,6 @@ app.get('/api/users/:_id/logs', async (req, res) => {
         res.json(responseObj);
       });
   });
-
-  // const { from, to, limit } = req.query;
-  // let userId = req.params._id;
-  // const query = { userId };
-
-  // if (from || to) {
-  //   query.date = {};
-
-  //   if (from) {
-  //     query.date['$gte'] = from;
-  //   }
-
-  //   if (to) {
-  //     query.date['$lte'] = to;
-  //   }
-  // }
-
-  // const user = await User.findById(userId);
-  // const exerciseQuery = Exercise.find(query);
-  // if (limit) {
-  //   exerciseQuery.limit(parseInt(limit));
-  // }
-
-  // const exercises = await exerciseQuery;
-
-  // res.json({
-  //   ...user.toJSON(),
-  //   count: exercises.length,
-  //   log: exercises.map((exercise) => {
-  //     return {
-  //       description: exercise.description,
-  //       duration: exercise.duration,
-  //       date: exercise.date,
-  //     };
-  //   }),
-  // });
 });
 
 mongoose
