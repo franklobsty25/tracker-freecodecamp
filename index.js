@@ -95,7 +95,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
       username: user.username,
     };
 
-    nonNullLimit = parseInt(limit) ?? 500;
+    nonNullLimit = parseInt(limit) ?? 0;
 
     Exercise.find(queryObj)
       .limit(nonNullLimit)
