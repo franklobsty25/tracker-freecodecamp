@@ -124,12 +124,17 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   const { from, to, limit } = req.query;
   let userId = req.params._id;
   const query = { userId };
-  if (from) {
-    query.date['$gte'] = new Date(from);
-  }
 
-  if (to) {
-    query.date['$lte'] = new Date(to);
+  if (from || to) {
+    query.date = {};
+
+    if (from) {
+      query.date['$gte'] = from;
+    }
+
+    if (to) {
+      query.date['$lte'] = to;
+    }
   }
 
   const user = await User.findById(userId);
